@@ -1,6 +1,8 @@
 package com.example.cinemoapp.models
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 data class MovieAvaiableModel(
 
@@ -8,6 +10,7 @@ data class MovieAvaiableModel(
     val movies: List<MoviesItem>? = null
 )
 
+@Parcelize
 data class MoviesItem(
 
     @field:SerializedName("poster_ori")
@@ -93,4 +96,5 @@ data class MoviesItem(
 
     @field:SerializedName("movieCode")
     val movieCode: List<String?>? = null
-)
+
+): Parcelable

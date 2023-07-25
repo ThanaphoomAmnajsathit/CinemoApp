@@ -2,13 +2,19 @@ package com.example.cinemoapp.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.cinemoapp.databinding.ItemMovieLayoutBinding
 import com.example.cinemoapp.models.MoviesItem
+import com.example.cinemoapp.utils.DateFormat
 import com.example.cinemoapp.view.fragments.MovieListFragment
+import java.time.format.DateTimeFormatter
 
-class MovieListAdapter(val fragment : MovieListFragment): RecyclerView.Adapter<MovieListAdapter.MyViewHolder>(){
+class MovieListAdapter(
+    val fragment : Fragment,
+    val onItemClicked : (Int, MoviesItem) -> Unit
+    ): RecyclerView.Adapter<MovieListAdapter.MyViewHolder>(){
 
     private var list: MutableList<MoviesItem> = arrayListOf()
 
@@ -36,7 +42,8 @@ class MovieListAdapter(val fragment : MovieListFragment): RecyclerView.Adapter<M
             Glide.with(fragment).load(item.posterUrl).into(binding.ivMovie)
             binding.tvMovieType.text = item.genre
             binding.tvMovieName.text = item.titleEn
-            binding.tvMovieDate.text = item.releaseDate
+            binding.tvMovieDate.text = DateFormat(item.releaseDate).dateConvert()
+            binding.itemMovieLayout.setOnClickListener { onItemClicked.invoke(adapterPosition,item) }
         }
     }
 }

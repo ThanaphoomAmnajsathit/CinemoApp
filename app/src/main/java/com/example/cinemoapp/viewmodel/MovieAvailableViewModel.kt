@@ -1,12 +1,15 @@
 package com.example.cinemoapp.viewmodel
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cinemoapp.models.MovieAvaiableModel
+import com.example.cinemoapp.models.MoviesItem
 import com.example.cinemoapp.repository.MovieAvailableRepository
+import com.example.cinemoapp.utils.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,19 +20,27 @@ class MovieAvailableViewModel @Inject constructor(
 ):ViewModel() {
     val TAG :String = "MovieAvailableViewModel"
 
-    private val _response = MutableLiveData<MovieAvaiableModel>()
-    val responseMovies: LiveData<MovieAvaiableModel>
+    private val _response = MutableLiveData<UiState<MovieAvaiableModel>>()
+    val responseMovies: LiveData<UiState<MovieAvaiableModel>>
         get() = _response
 
-    fun getMovies() = viewModelScope.launch {
-        repository.getMovies().let {response ->
+    private val favoriteMovies = mutableListOf<MoviesItem>()
 
-            if (response.isSuccessful){
-                _response.postValue(response.body())
-            }else{
-                Log.d(TAG,response.code().toString())
-            }
+    fun getMovies() = viewModelScope.launch {
+        _response.value = UiState.Loading
+        repository.getMovies {
+            _response.value = it
         }
+    }
+
+    fun addToFavorites(movie: MoviesItem) {
+        if (!favoriteMovies.contains(movie)) {
+            favoriteMovies.add(movie)
+        }
+    }
+
+    fun getFavoriteMovies(): MutableList<MoviesItem> {
+        return favoriteMovies
     }
 
 }
