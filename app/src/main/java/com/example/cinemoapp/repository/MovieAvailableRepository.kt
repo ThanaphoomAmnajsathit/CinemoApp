@@ -15,5 +15,4 @@ class MovieAvailableRepository @Inject constructor(
             result.invoke(UiState.Failure(response.code().toString()))
         }
     }
-
 }

@@ -28,7 +28,7 @@ class MovieListFragment : Fragment() {
     val adapter by lazy {
         MovieListAdapter(this,
             onItemClicked = { pos, item ->
-                val fragment = MovieDetailFragment.newInstance(item)
+                val fragment = MovieDetailFragment.newInstance(item,TAG)
                 findNavController().navigate(R.id.action_movieListFragment_to_movieDetailFragment,fragment.arguments)
             }
         )

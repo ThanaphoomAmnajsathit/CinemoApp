@@ -43,4 +43,10 @@ class MovieAvailableViewModel @Inject constructor(
         return favoriteMovies
     }
 
+    fun removeFavorite(movie: MoviesItem){
+        if (favoriteMovies.contains(movie)){
+            favoriteMovies.remove(movie)
+        }
+    }
+
 }

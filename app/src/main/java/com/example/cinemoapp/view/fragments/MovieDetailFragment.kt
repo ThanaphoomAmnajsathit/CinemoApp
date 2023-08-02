@@ -22,15 +22,16 @@ import dagger.hilt.android.AndroidEntryPoint
 class MovieDetailFragment() : Fragment() {
 
     private val TAG: String = "MovieListFragment"
-
     private var moviesItem: MoviesItem? = null
-
+    private var fragmentTag: String? = null
     private lateinit var binding: FragmentMovieDetailBinding
     private val viewModel: MovieAvailableViewModel by viewModels({requireActivity()})
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             moviesItem = it.getParcelable("movie_item")
+            fragmentTag = it.getString("fragment_tag")
         }
     }
 
@@ -49,22 +50,46 @@ class MovieDetailFragment() : Fragment() {
         binding.tvMovieType.text = moviesItem?.genre
         binding.tvMovieName.text = moviesItem?.titleEn
         binding.tvMovieDiscription.text = moviesItem?.synopsisEn
-        binding.favoriteBtn.setOnClickListener {
-            if (moviesItem != null){
-                viewModel.addToFavorites(moviesItem!!)
+        bindButton()
+    }
+
+    private fun bindButton(){
+        if (fragmentTag.equals("MovieFavoriteFragment")){
+            binding.favoriteBtn.text = getString(R.string.remove_favorite)
+            setRemoveFavoriteClickListener()
+        }else{
+            setAddToFavoritesClickListener()
+        }
+    }
+
+    private fun setRemoveFavoriteClickListener() {
+        if (moviesItem != null) {
+            binding.favoriteBtn.setOnClickListener {
+                viewModel.removeFavorite(moviesItem!!)
+                findNavController().popBackStack()
             }
-            findNavController().popBackStack()
+        }
+    }
+
+    private fun setAddToFavoritesClickListener() {
+        if (moviesItem != null) {
+            binding.favoriteBtn.setOnClickListener {
+                viewModel.addToFavorites(moviesItem!!)
+                findNavController().popBackStack()
+            }
         }
     }
 
     companion object {
         @JvmStatic
         fun newInstance(
-            moviesItem: MoviesItem
+            moviesItem: MoviesItem,
+            fragmentTag: String
         ) =
             MovieDetailFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable("movie_item",moviesItem)
+                    putString("fragment_tag",fragmentTag)
                 }
             }
     }
